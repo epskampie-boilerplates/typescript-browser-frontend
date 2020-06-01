@@ -1,3 +1,6 @@
+// scss
+import '../css/index.scss';
+
 console.log('Hello from typescript!');
 
 var h1 = document.createElement('h1');

@@ -3,18 +3,18 @@ const webpack = require('webpack');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
-const CleanWebpackPlugin = require('clean-webpack-plugin');
+const { CleanWebpackPlugin } = require('clean-webpack-plugin');
 
 // Pass in public path with npm build --publicpath="http://example.com/assets"
 let publicPath = process.env.npm_config_publicpath;
 
-module.exports = env => {
+module.exports = (env) => {
   var production = env && env.production;
   var enableSourcemap = true; // Gives componentDidMountProblems
 
   var config = {
     entry: {
-      index: './src/js/index.tsx'
+      index: './src/js/index.tsx',
     },
     stats: { modules: false },
     target: 'web',
@@ -23,7 +23,7 @@ module.exports = env => {
         {
           test: /\.tsx?$/,
           use: 'ts-loader',
-          exclude: /node_modules/
+          exclude: /node_modules/,
         },
         {
           test: /\.scss$/,
@@ -33,35 +33,34 @@ module.exports = env => {
               : // creates style nodes from JS strings
                 {
                   loader: 'style-loader',
-                  options: { sourceMap: enableSourcemap }
                 },
             {
               loader: 'css-loader',
-              options: { url: false, sourceMap: enableSourcemap }
+              options: { url: false, sourceMap: enableSourcemap },
             },
-            { loader: 'sass-loader', options: { sourceMap: enableSourcemap } }
-          ]
+            { loader: 'sass-loader', options: { sourceMap: enableSourcemap } },
+          ],
         },
         {
           test: /\.(svg|png|jpg|jpeg|mp3)?$/,
-          loader: 'file-loader'
-        }
-      ]
+          loader: 'file-loader',
+        },
+      ],
     },
     resolve: {
-      extensions: ['.tsx', '.ts', '.js']
+      extensions: ['.tsx', '.ts', '.js'],
     },
     output: {
-      filename: '[name].[hash].js'
+      filename: '[name].js',
     },
     plugins: [
       // Copy index.html, parse template tags
       new HtmlWebpackPlugin({
         inject: false,
         template: './src/index.html',
-        filename: 'index.html'
-      })
-    ]
+        filename: 'index.html',
+      }),
+    ],
   };
 
   if (publicPath) {
@@ -71,22 +70,22 @@ module.exports = env => {
   if (production) {
     // prod
     Object.assign(config, {
-      mode: 'production'
+      mode: 'production',
     });
 
     config.plugins.push(
       // Set NODE_ENV to production for optimized react builds
       new webpack.DefinePlugin({
-        'process.env': { NODE_ENV: JSON.stringify('production') }
+        'process.env': { NODE_ENV: JSON.stringify('production') },
       }),
       // Remove build dir
-      new CleanWebpackPlugin(['dist/*']),
+      new CleanWebpackPlugin(),
       // Extract css to file
       new MiniCssExtractPlugin({
-        filename: '[name].[contenthash].css'
+        filename: '[name].css',
       }),
       // Copy images to build dir
-      new CopyWebpackPlugin([{ from: 'resources' }])
+      new CopyWebpackPlugin({ patterns: [{ from: 'resources', to: 'dist' }] })
     );
   } else {
     // dev
@@ -103,13 +102,13 @@ module.exports = env => {
         overlay: {
           errors: true,
           warnings: false,
-          open: true
+          open: true,
         },
         stats: { modules: false },
         hot: true,
-        host: '0.0.0.0'
+        host: '0.0.0.0',
         // https: true,
-      }
+      },
     });
   }
 
