@@ -5,12 +5,8 @@ const HtmlWebpackPlugin = require('html-webpack-plugin');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
 const { CleanWebpackPlugin } = require('clean-webpack-plugin');
 
-// Pass in public path with npm build --publicpath="http://example.com/assets"
-let publicPath = process.env.npm_config_publicpath;
-
 module.exports = (env) => {
   var production = env && env.production;
-  var enableSourcemap = true; // Gives componentDidMountProblems
 
   var config = {
     entry: {
@@ -36,9 +32,9 @@ module.exports = (env) => {
                 },
             {
               loader: 'css-loader',
-              options: { url: false, sourceMap: enableSourcemap },
+              options: { url: false, sourceMap: !production },
             },
-            { loader: 'sass-loader', options: { sourceMap: enableSourcemap } },
+            { loader: 'sass-loader', options: { sourceMap: !production } },
           ],
         },
         {
@@ -51,6 +47,7 @@ module.exports = (env) => {
       extensions: ['.tsx', '.ts', '.js'],
     },
     output: {
+      path: path.join(__dirname, '/dist/'),
       filename: '[name].js',
     },
     plugins: [
@@ -62,10 +59,6 @@ module.exports = (env) => {
       }),
     ],
   };
-
-  if (publicPath) {
-    config.output.publicPath = publicPath;
-  }
 
   if (production) {
     // prod

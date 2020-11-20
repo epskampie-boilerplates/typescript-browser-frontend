@@ -32,6 +32,6 @@ class AppView extends React.Component<Props, State> {
 }
 
 ReactDOM.render(
-  <AppView name="simon2" />,
+  <AppView name="Simon" />,
   document.getElementById('react-root')
 );
